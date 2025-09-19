@@ -40,19 +40,61 @@ This agent framework:
 
 ## Conceptual Example (Pi-hole)
 
-Here’s how you can think of a Pi-hole example in the context of Active Inference + this agent:
+## 🧩 Conceptual Example: Pi-hole as an Active Inference Agent
 
-Imagine you run a Pi-hole (a network-level ad and tracker blocker). It observes DNS requests (observations), and can **act** by blocking or allowing certain domain name lookups. Your hidden state might be "Is this domain malicious or not?" or "Is this request safe or suspicious?". The Pi-hole has preferences: for example, it prefers to **minimise malicious domains passing through**, but it also wants to **avoid false positives** (blocking good domains).  
+To better understand the agent, let’s map the **Pi-hole** example into a **Reinforcement Learning (RL)–style matrix**, then compare it with **Active Inference**.
 
-- **Observation model**: The Pi-hole sees domain requests, maybe features of requests (source, domain name, frequency).  
-- **Hidden states**: Whether each domain is malicious vs benign.  
-- **Actions / policies**: Block or allow a domain.  
-- **Transition model**: Domains might change over time; maybe a benign domain gets compromised, or a malicious domain becomes less active.  
-- **Preferences**: High preference for allowing benign domains, strong negative preference for letting malicious requests through.  
+---
 
-Using Active Inference, the Pi-hole agent infers whether a request is from a malicious or benign domain, predicts possible next observations under different actions (block vs allow), then selects the action which minimises expected free energy — effectively balancing the trade-off between blocking threats and avoiding overblocking.
+### RL View (Q-Matrix)
 
-This agent repo works similarly: you define your observation / transition models, your preferences, and the agent infers and acts.
+In Reinforcement Learning, we might represent the situation as:
+
+| **State**         | **Action: Allow** | **Action: Block** |
+|--------------------|-------------------|-------------------|
+| **Benign Domain**  | +1 (✅ correct)   | -1 (🚫 false block)|
+| **Malicious Domain** | -10 (❌ threat)  | +5 (✅ blocked)   |
+
+- **Benign domain + Allow** → Positive reward  
+- **Benign domain + Block** → Negative reward (annoying false positive)  
+- **Malicious domain + Allow** → Very negative reward (security breach)  
+- **Malicious domain + Block** → Positive reward (safe)  
+
+This is how **Pi-hole** would be trained in a pure RL setting.
+
+---
+
+### Active Inference View
+
+In Active Inference, instead of learning Q-values directly, the agent:  
+
+1. **Infers hidden states**: “Is this request malicious or benign?”  
+2. **Uses observation model**: Based on DNS request features (domain name, frequency, source).  
+3. **Selects actions to minimise expected free energy (EFE)**:  
+   - Prefers accurate predictions (epistemic value)  
+   - Prefers outcomes aligned with security preferences (pragmatic value).  
+
+---
+
+### Visual Intuition
+
+
+#### RL Matrix View
+
+![RL Matrix](https://raw.githubusercontent.com/Thirumal-iith/assets/main/rl_matrix_example.png)
+
+#### Active Inference Flow
+
+![Active Inference](https://raw.githubusercontent.com/Thirumal-iith/assets/main/active_inference_flow.png)
+
+---
+
+The **Pi-hole analogy** shows how this repo’s agent works:  
+- It continuously observes requests,  
+- Infers whether they are benign/malicious,  
+- Acts (block/allow),  
+- And updates its beliefs to minimise future uncertainty + unwanted outcomes.
+
 
 ---
 
