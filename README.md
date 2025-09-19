@@ -76,18 +76,6 @@ In Active Inference, instead of learning Q-values directly, the agent:
 
 ---
 
-### Visual Intuition
-
-
-#### RL Matrix View
-
-![RL Matrix](https://raw.githubusercontent.com/Thirumal-iith/assets/main/rl_matrix_example.png)
-
-#### Active Inference Flow
-
-![Active Inference](https://raw.githubusercontent.com/Thirumal-iith/assets/main/active_inference_flow.png)
-
----
 
 The **Pi-hole analogy** shows how this repo’s agent works:  
 - It continuously observes requests,  
